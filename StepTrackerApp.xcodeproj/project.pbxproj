@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F8099C02B1D1009002BDAB6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8099BF2B1D1009002BDAB6 /* MainViewController.swift */; };
+		3F8099C22B1D1023002BDAB6 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8099C12B1D1023002BDAB6 /* SignUpViewController.swift */; };
+		3F8099C42B1D1284002BDAB6 /* UIViewController+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8099C32B1D1284002BDAB6 /* UIViewController+Validation.swift */; };
 		3FBAA2D12B1637950094F808 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D02B1637950094F808 /* AppDelegate.swift */; };
 		3FBAA2D32B1637950094F808 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D22B1637950094F808 /* SceneDelegate.swift */; };
-		3FBAA2D52B1637950094F808 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D42B1637950094F808 /* ViewController.swift */; };
+		3FBAA2D52B1637950094F808 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D42B1637950094F808 /* LoginViewController.swift */; };
 		3FBAA2D82B1637960094F808 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D62B1637960094F808 /* Main.storyboard */; };
 		3FBAA2DA2B1637960094F808 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D92B1637960094F808 /* Assets.xcassets */; };
 		3FBAA2DD2B1637960094F808 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FBAA2DB2B1637960094F808 /* LaunchScreen.storyboard */; };
@@ -36,10 +39,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F8099BF2B1D1009002BDAB6 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		3F8099C12B1D1023002BDAB6 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		3F8099C32B1D1284002BDAB6 /* UIViewController+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Validation.swift"; sourceTree = "<group>"; };
 		3FBAA2CD2B1637950094F808 /* StepTrackerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepTrackerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FBAA2D02B1637950094F808 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3FBAA2D22B1637950094F808 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		3FBAA2D42B1637950094F808 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3FBAA2D42B1637950094F808 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		3FBAA2D72B1637960094F808 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3FBAA2D92B1637960094F808 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3FBAA2DC2B1637960094F808 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -101,11 +107,14 @@
 			children = (
 				3FBAA2D02B1637950094F808 /* AppDelegate.swift */,
 				3FBAA2D22B1637950094F808 /* SceneDelegate.swift */,
-				3FBAA2D42B1637950094F808 /* ViewController.swift */,
+				3FBAA2D42B1637950094F808 /* LoginViewController.swift */,
 				3FBAA2D62B1637960094F808 /* Main.storyboard */,
 				3FBAA2D92B1637960094F808 /* Assets.xcassets */,
 				3FBAA2DB2B1637960094F808 /* LaunchScreen.storyboard */,
 				3FBAA2DE2B1637960094F808 /* Info.plist */,
+				3F8099BF2B1D1009002BDAB6 /* MainViewController.swift */,
+				3F8099C12B1D1023002BDAB6 /* SignUpViewController.swift */,
+				3F8099C32B1D1284002BDAB6 /* UIViewController+Validation.swift */,
 			);
 			path = StepTrackerApp;
 			sourceTree = "<group>";
@@ -258,9 +267,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FBAA2D52B1637950094F808 /* ViewController.swift in Sources */,
+				3FBAA2D52B1637950094F808 /* LoginViewController.swift in Sources */,
 				3FBAA2D12B1637950094F808 /* AppDelegate.swift in Sources */,
 				3FBAA2D32B1637950094F808 /* SceneDelegate.swift in Sources */,
+				3F8099C42B1D1284002BDAB6 /* UIViewController+Validation.swift in Sources */,
+				3F8099C02B1D1009002BDAB6 /* MainViewController.swift in Sources */,
+				3F8099C22B1D1023002BDAB6 /* SignUpViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
