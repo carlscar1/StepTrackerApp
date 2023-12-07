@@ -42,6 +42,7 @@
 		3F8099BF2B1D1009002BDAB6 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		3F8099C12B1D1023002BDAB6 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		3F8099C32B1D1284002BDAB6 /* UIViewController+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Validation.swift"; sourceTree = "<group>"; };
+		3F8EF03B2B216D3B009AFC7B /* StepTrackerApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StepTrackerApp.entitlements; sourceTree = "<group>"; };
 		3FBAA2CD2B1637950094F808 /* StepTrackerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepTrackerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FBAA2D02B1637950094F808 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3FBAA2D22B1637950094F808 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -105,6 +106,7 @@
 		3FBAA2CF2B1637950094F808 /* StepTrackerApp */ = {
 			isa = PBXGroup;
 			children = (
+				3F8EF03B2B216D3B009AFC7B /* StepTrackerApp.entitlements */,
 				3FBAA2D02B1637950094F808 /* AppDelegate.swift */,
 				3FBAA2D22B1637950094F808 /* SceneDelegate.swift */,
 				3FBAA2D42B1637950094F808 /* LoginViewController.swift */,
@@ -452,10 +454,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StepTrackerApp/StepTrackerApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepTrackerApp/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app wants to read steps from your health data.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -479,10 +483,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StepTrackerApp/StepTrackerApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepTrackerApp/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app wants to read steps from your health data.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
