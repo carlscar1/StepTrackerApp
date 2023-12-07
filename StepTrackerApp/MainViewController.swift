@@ -15,6 +15,8 @@ class MainViewController: UIViewController {
     
     @IBOutlet weak var stepsLabel: UILabel!
     @IBOutlet weak var loginLabel: UILabel!
+    @IBOutlet weak var stepsProgress: UIProgressView!
+    @IBOutlet weak var percentLabel: UILabel!
     
     var userEmail : String?
     
@@ -30,8 +32,10 @@ class MainViewController: UIViewController {
                     DispatchQueue.main.async {
                         print("Step count is:", Int(stepCount)) // Get the step count.
                         self.stepsLabel.text = "You have walked \(Int(stepCount)) steps!"
+                        //these things do not update here...
                     }
         }
+        
     }
     
         private func authorizeHealthKit() {
@@ -64,9 +68,12 @@ class MainViewController: UIViewController {
                 DispatchQueue.main.async {
                     print("Step count is:", Int(mSample)) // Get the step count.
                     self.stepsLabel.text = "You have walked \(Int(mSample)) steps!"
+                    let progressPercent: Float = Float(mSample/10000)
+                    self.percentLabel.text = "\(Int(mSample))/10,000 steps = \(Float(progressPercent*100))% of goal!"
+                    self.stepsProgress.setProgress(progressPercent, animated: false)
+                    // here is where to update the step count labels/info
                 }
             })
-            //self.stepsLabel.text = "You have walked \(Int(mSample)) steps!"
             self.healthStore .execute(sampleQuery)
 
         }

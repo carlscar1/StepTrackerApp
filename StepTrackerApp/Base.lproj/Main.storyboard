@@ -97,8 +97,8 @@
                                 <rect key="frame" x="121" y="267" width="150" height="4"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </progressView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Your goal was: x (if no goal--10,000?)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MwR-zg-xeh">
-                                <rect key="frame" x="54" y="303" width="285" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Your goal was: x (if no goal--10,000?)" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MwR-zg-xeh">
+                                <rect key="frame" x="16" y="279" width="361" height="77"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -134,7 +134,9 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="loginLabel" destination="E7B-V7-JIE" id="1Uf-9S-4IN"/>
+                        <outlet property="percentLabel" destination="MwR-zg-xeh" id="a6i-SK-LkV"/>
                         <outlet property="stepsLabel" destination="wxZ-jH-Wew" id="pId-tB-oKA"/>
+                        <outlet property="stepsProgress" destination="khT-fl-Yg3" id="bTr-Ns-kBD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AVy-zH-YJq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
