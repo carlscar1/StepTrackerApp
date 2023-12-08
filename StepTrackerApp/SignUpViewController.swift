@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseCore
+import FirebaseAuth
 
 class SignUpViewController: UIViewController {
     @IBOutlet weak var emailField: UITextField!
@@ -42,6 +45,9 @@ class SignUpViewController: UIViewController {
         @IBAction func signupButtonPressed(_ sender: UIButton) {
             if self.validateFields() {
                 print(NSLocalizedString("Congratulations!  You entered correct values.", comment: ""))
+                Auth.auth().createUser(withEmail: self.emailField.text!, password: self.passwordField.text!) { authResult, error in
+                  // ...
+                }
                 self.performSegue(withIdentifier: "segueToMainFromSignUp", sender: self)
             }
         }

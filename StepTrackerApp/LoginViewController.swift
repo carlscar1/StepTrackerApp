@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class LoginViewController: UIViewController {
 
@@ -45,11 +46,51 @@ class LoginViewController: UIViewController {
 
     
     @IBAction func signInButtonPressed(_ sender: UIButton) {
-        if self.validateFields() {
-            print(NSLocalizedString("Congratulations!  You entered correct values.", comment: ""))
-            self.performSegue(withIdentifier: "segueToMain", sender: self)
-        }
+
+        let email = self.emailField.text!
+        let password = self.passwordField.text!
+
+                Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+                    if let error = error as NSError? {
+                        switch error.code {
+                        case AuthErrorCode.userNotFound.rawValue:
+                            // User does not exist, show shake animation
+                            self.showShakeAnimation(on: [self.emailField, self.passwordField])
+                            print("User does not exist with the provided email")
+                            // You may choose to show an alert or perform other actions here
+                        case AuthErrorCode.wrongPassword.rawValue:
+                            // Wrong password, handle accordingly
+                            print("Wrong password. Please check your password and try again.")
+                            // You may choose to show an alert or perform other actions here
+                        default:
+                            // Handle other errors, e.g., show an error message to the user
+                            self.showShakeAnimation(on: [self.emailField, self.passwordField])
+                            print("Sign-in failed with error: \(error.localizedDescription)")
+                        }
+                    } else {
+                        // User signed in successfully
+                        self.performSegue(withIdentifier: "segueToMain", sender: self)
+                        print("User signed in with UID: \(authResult?.user.uid ?? "")")
+                        // Handle success, e.g., navigate to the next screen
+                    }
+                }
     }
+    
+    private func showShakeAnimation(on views: [UIView]) {
+            let shakeAnimation = CABasicAnimation(keyPath: "position")
+            shakeAnimation.duration = 0.07
+            shakeAnimation.repeatCount = 3
+            shakeAnimation.autoreverses = true
+
+            for view in views {
+                let fromPoint = CGPoint(x: view.center.x - 10, y: view.center.y)
+                let toPoint = CGPoint(x: view.center.x + 10, y: view.center.y)
+                shakeAnimation.fromValue = NSValue(cgPoint: fromPoint)
+                shakeAnimation.toValue = NSValue(cgPoint: toPoint)
+                view.layer.add(shakeAnimation, forKey: "position")
+            }
+        }
+    
     
     @IBAction func logout(segue : UIStoryboardSegue) {
         print("Logged out")
