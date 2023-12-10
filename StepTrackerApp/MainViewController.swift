@@ -80,44 +80,55 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }
         }
     
-        private func gettingStepCount(completion: @escaping (Double) -> Void) {
-            var mSample = 0.0
-            let type = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-            let sampleQuery = HKSampleQuery.init(sampleType: type,
-                                                 predicate: get24hPredicate(),
-                                                 limit: HKObjectQueryNoLimit,
-                                                 sortDescriptors: nil,
-                                                 resultsHandler: { (query, results, error) in
+    private func gettingStepCount(completion: @escaping (Double) -> Void) {
+        var mSample = 0.0
+        let type = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+        
+        let sampleQuery = HKSampleQuery(
+            sampleType: type,
+            predicate: getTodayPredicate(),
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: nil,
+            resultsHandler: { (query, results, error) in
                 
                 guard let samples = results as? [HKQuantitySample] else {
                     print(error!)
                     return
                 }
+                
                 for sample in samples {
-                    mSample = mSample + sample.quantity.doubleValue(for: HKUnit(from: "count"))
-                    //print("Step count : \(mSample)")
-                    //self.stepsLabel.text = "You have walked \(Int(mSample)) steps!"
+                    mSample += sample.quantity.doubleValue(for: HKUnit(from: "count"))
                 }
-                print("Step count : \(mSample)")
-                //self.stepsLabel.text = "You have walked \(Int(mSample)) steps!"
+                
                 DispatchQueue.main.async {
-                    print("Step count is:", Int(mSample)) // Get the step count.
+                    print("Step count is:", Int(mSample))
                     self.stepsLabel.text = "You have walked \(Int(mSample)) steps today!"
-                    let progressPercent: Float = Float(mSample/10000)
-                    self.percentLabel.text = "\(Int(mSample))/10,000 steps = \(Float(progressPercent*100))% of goal!"
+                    let progressPercent: Float = Float(mSample / 10000)
+                    self.percentLabel.text = "\(Int(mSample))/10,000 steps = \(Float(progressPercent * 100))% of goal!"
                     self.stepsProgress.setProgress(progressPercent, animated: false)
                     self.numSteps = Int(mSample)
-                    // here is where to update the step count labels/info
                     
+                    // Update the step count labels/info
                     if let r = self.ref {
                         let leader = LeaderboardData(name: self.userEmail, stepsWalked: self.numSteps)
                         r.addDocument(data: self.toDictionary(vals: leader))
                     }
                 }
-            })
-            self.healthStore .execute(sampleQuery)
+            }
+        )
+        
+        self.healthStore.execute(sampleQuery)
+    }
 
-        }
+    // Helper method to create a predicate for today
+    private func getTodayPredicate() -> NSPredicate {
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfDay = calendar.startOfDay(for: now)
+        let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: now)!
+        return HKQuery.predicateForSamples(withStart: startOfDay, end: endOfDay, options: .strictStartDate)
+    }
+
     
     private func get24hPredicate() ->  NSPredicate{
             let today = Date()
