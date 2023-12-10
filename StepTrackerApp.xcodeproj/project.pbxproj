@@ -12,6 +12,7 @@
 		3F8099C42B1D1284002BDAB6 /* UIViewController+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8099C32B1D1284002BDAB6 /* UIViewController+Validation.swift */; };
 		3F8EF03D2B24EE4E009AFC7B /* LeaderboardData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8EF03C2B24EE4E009AFC7B /* LeaderboardData.swift */; };
 		3F8EF03F2B24EF7C009AFC7B /* LeaderboardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8EF03E2B24EF7C009AFC7B /* LeaderboardModel.swift */; };
+		3F8EF04B2B253A2A009AFC7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3F8EF04A2B253A2A009AFC7B /* GoogleService-Info.plist */; };
 		3FBAA2D12B1637950094F808 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D02B1637950094F808 /* AppDelegate.swift */; };
 		3FBAA2D32B1637950094F808 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D22B1637950094F808 /* SceneDelegate.swift */; };
 		3FBAA2D52B1637950094F808 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAA2D42B1637950094F808 /* LoginViewController.swift */; };
@@ -24,7 +25,6 @@
 		8EA1EC612B23AE4800950889 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8EA1EC602B23AE4800950889 /* FirebaseAnalytics */; };
 		8EA1EC632B23AE4800950889 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8EA1EC622B23AE4800950889 /* FirebaseAuth */; };
 		8EA1EC652B23AE4800950889 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8EA1EC642B23AE4800950889 /* FirebaseFirestore */; };
-		8EA1EC672B23AEA300950889 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8EA1EC662B23AEA300950889 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +51,7 @@
 		3F8EF03B2B216D3B009AFC7B /* StepTrackerApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StepTrackerApp.entitlements; sourceTree = "<group>"; };
 		3F8EF03C2B24EE4E009AFC7B /* LeaderboardData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardData.swift; sourceTree = "<group>"; };
 		3F8EF03E2B24EF7C009AFC7B /* LeaderboardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardModel.swift; sourceTree = "<group>"; };
+		3F8EF04A2B253A2A009AFC7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3FBAA2CD2B1637950094F808 /* StepTrackerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepTrackerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FBAA2D02B1637950094F808 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3FBAA2D22B1637950094F808 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -64,7 +65,6 @@
 		3FBAA2ED2B1637960094F808 /* StepTrackerAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StepTrackerAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FBAA2F12B1637960094F808 /* StepTrackerAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepTrackerAppUITests.swift; sourceTree = "<group>"; };
 		3FBAA2F32B1637960094F808 /* StepTrackerAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepTrackerAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		8EA1EC662B23AEA300950889 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,7 +118,6 @@
 		3FBAA2CF2B1637950094F808 /* StepTrackerApp */ = {
 			isa = PBXGroup;
 			children = (
-				8EA1EC662B23AEA300950889 /* GoogleService-Info.plist */,
 				3F8EF03B2B216D3B009AFC7B /* StepTrackerApp.entitlements */,
 				3FBAA2D02B1637950094F808 /* AppDelegate.swift */,
 				3FBAA2D22B1637950094F808 /* SceneDelegate.swift */,
@@ -132,6 +131,7 @@
 				3F8099C32B1D1284002BDAB6 /* UIViewController+Validation.swift */,
 				3F8EF03C2B24EE4E009AFC7B /* LeaderboardData.swift */,
 				3F8EF03E2B24EF7C009AFC7B /* LeaderboardModel.swift */,
+				3F8EF04A2B253A2A009AFC7B /* GoogleService-Info.plist */,
 			);
 			path = StepTrackerApp;
 			sourceTree = "<group>";
@@ -266,7 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FBAA2DD2B1637960094F808 /* LaunchScreen.storyboard in Resources */,
-				8EA1EC672B23AEA300950889 /* GoogleService-Info.plist in Resources */,
+				3F8EF04B2B253A2A009AFC7B /* GoogleService-Info.plist in Resources */,
 				3FBAA2DA2B1637960094F808 /* Assets.xcassets in Resources */,
 				3FBAA2D82B1637960094F808 /* Main.storyboard in Resources */,
 			);
