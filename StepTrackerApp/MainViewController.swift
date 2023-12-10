@@ -17,6 +17,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     fileprivate var ref: CollectionReference?
     fileprivate var db: Firestore!
     fileprivate var listener: ListenerRegistration?
+    var uniqueUserIDs: Set<String> = Set()
     
     @IBOutlet weak var stepsLabel: UILabel!
     @IBOutlet weak var loginLabel: UILabel!
@@ -26,9 +27,15 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     @IBOutlet weak var tableView: UITableView!
     
+    @IBAction func setGoalButtonPressed(_ sender: Any) {
+            showStepGoalAlert()
+        }
+
+    
     var userEmail : String?
     var leaderboards : [LeaderboardData]?
     var numSteps: Int?
+    var stepGoal: Int?
     
     var tableViewData: [(sectionHeader: String, leaderboards: [LeaderboardData])]? {
         didSet {
@@ -45,7 +52,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         ref = db.collection("leaderboard")
         
         if let email = self.userEmail {
-                self.loginLabel.text = email
+                self.loginLabel.text = ("Welcome, " + email + "!")
         }
         
         authorizeHealthKit() // This function provides to authorize the HealthKit.
@@ -73,6 +80,49 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.listener?.remove()
     }
     
+    private func showStepGoalAlert() {
+        let alertController = UIAlertController(title: "Set Step Goal", message: "Enter your step goal:", preferredStyle: .alert)
+
+        alertController.addTextField { textField in
+            textField.placeholder = "Enter goal"
+            textField.keyboardType = .numberPad
+        }
+
+        let setAction = UIAlertAction(title: "Set Goal", style: .default) { [weak self] _ in
+            if let textField = alertController.textFields?.first,
+               let goalText = textField.text,
+               let goal = Int(goalText) {
+                self?.handleStepGoalSet(goal)
+            }
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+
+        alertController.addAction(setAction)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    private func handleStepGoalSet(_ goal: Int) {
+            // Handle the step goal set by the user
+            print("Step goal set: \(goal)")
+
+            // Save the goal to the variable
+            self.stepGoal = goal
+
+            // Update your UI or perform any other necessary actions with the step goal
+            if let goal = self.stepGoal {
+                print("Current step goal: \(goal)")
+
+                
+                // Update the UI with the new step goal
+                let progressPercent: Float = Float(self.numSteps!) / Float(goal)
+                self.percentLabel.text = "\(self.numSteps!)/\(goal) steps = \(Float(progressPercent * 100))% of goal"
+                
+            }
+        }
+    
         private func authorizeHealthKit() {
             let healthKitTypes: Set = [ HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)! ] // We want to access the step count.
             healthStore.requestAuthorization(toShare: nil, read: healthKitTypes) { (success, error) in  // We will check the authorization.
@@ -82,32 +132,50 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     private func gettingStepCount(completion: @escaping (Double) -> Void) {
         var mSample = 0.0
+
+        // Get the current step count before querying for new data
+        if let currentStepCount = self.numSteps {
+            mSample = Double(currentStepCount)
+        }
+
         let type = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-        
+
         let sampleQuery = HKSampleQuery(
             sampleType: type,
             predicate: getTodayPredicate(),
             limit: HKObjectQueryNoLimit,
             sortDescriptors: nil,
-            resultsHandler: { (query, results, error) in
-                
+            resultsHandler: { [weak self] (query, results, error) in
+
+                guard let self = self else { return }
+
                 guard let samples = results as? [HKQuantitySample] else {
                     print(error!)
                     return
                 }
-                
+
                 for sample in samples {
                     mSample += sample.quantity.doubleValue(for: HKUnit(from: "count"))
                 }
-                
+
                 DispatchQueue.main.async {
                     print("Step count is:", Int(mSample))
-                    self.stepsLabel.text = "You have walked \(Int(mSample)) steps today!"
-                    let progressPercent: Float = Float(mSample / 10000)
-                    self.percentLabel.text = "\(Int(mSample))/10,000 steps = \(Float(progressPercent * 100))% of goal!"
-                    self.stepsProgress.setProgress(progressPercent, animated: false)
-                    self.numSteps = Int(mSample)
+
+                    // Use the user-entered step goal if available, otherwise default to 10,000
+                    let userStepGoal = self.stepGoal ?? 10000
+
+                    // Display the current step count or 0 if no steps have been recorded yet
+                    let currentStepCountText = (mSample > 0) ? "\(Int(mSample))" : "0"
+
+                    self.stepsLabel.text = "You have walked \(currentStepCountText) steps today!"
                     
+                    // Update the progress view
+                    let progressPercent: Float = Float(mSample) / Float(userStepGoal)
+                    self.percentLabel.text = "\(currentStepCountText)/\(userStepGoal) steps = \(Float(progressPercent * 100))% of goal"
+                    self.stepsProgress.setProgress(progressPercent, animated: false)
+
+                    self.numSteps = Int(mSample)
+
                     // Update the step count labels/info
                     if let r = self.ref {
                         let leader = LeaderboardData(name: self.userEmail, stepsWalked: self.numSteps)
@@ -116,9 +184,23 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 }
             }
         )
-        
+
         self.healthStore.execute(sampleQuery)
     }
+
+
+
+
+
+
+    func toDictionary(vals: LeaderboardData) -> [String: Any] {
+        return [
+            "name": vals.name as Any,
+            "stepsWalked": vals.stepsWalked as Any
+        ]
+    }
+
+
 
     // Helper method to create a predicate for today
     private func getTodayPredicate() -> NSPredicate {
@@ -167,55 +249,71 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //return self.tableViewData?[section].leaderboards.count ?? 0
-        if let leads = self.leaderboards {
-            return leads.count
-        } else {
-            return 0
+            return self.tableViewData?[section].leaderboards.count ?? 0
         }
-    }
+
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            let cell = self.tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+
+            if let leader = self.tableViewData?[indexPath.section].leaderboards[indexPath.row] {
+                cell.textLabel?.text = leader.name
+                cell.detailTextLabel?.text = "\(leader.stepsWalked ?? 0) steps"
+            }
+            return cell
+        }
+
+        func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+            return self.tableViewData?[section].sectionHeader
+        }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
-        -> UITableViewCell
-    {
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: "Cell", for:
-            indexPath)
-            
-        if let leader = self.leaderboards?[indexPath.row] {
-            cell.textLabel?.text = leader.name
-            cell.detailTextLabel?.text = String(leader.stepsWalked!)
-        }
-        return cell
-            
+    fileprivate func registerForFireBaseUpdates() {
+        self.listener = self.ref?.order(by: "stepsWalked", descending: true).addSnapshotListener({ [weak self] (snapshot, error) in
+            guard let self = self else { return }
+
+            guard let documents = snapshot?.documents else {
+                print("Error fetching documents: \(error!)")
+                return
+            }
+
+            var newLeaderboards = [LeaderboardData]()
+            var processedUserIDs = Set<String>()
+
+            for document in documents {
+                let data = document.data()
+                let name = data["name"] as? String
+                let stepsWalked = data["stepsWalked"] as? Int
+
+                // Check if the user ID has been processed
+                if let userID = name, !processedUserIDs.contains(userID) {
+                    // Add the user ID to the set to mark it as processed
+                    processedUserIDs.insert(userID)
+
+                    // Add the leaderboard entry to the newLeaderboards array
+                    newLeaderboards.append(LeaderboardData(name: userID, stepsWalked: stepsWalked))
+                }
+
+                // Check if we have the top 5 entries
+                if newLeaderboards.count == 5 {
+                    break
+                }
+            }
+
+            self.leaderboards = newLeaderboards
+            self.tableViewData = [("Top 5 Daily Steps This Week: ", self.leaderboards ?? [])]
+            self.tableView.reloadData()
+        })
     }
+
+
     
-    fileprivate func registerForFireBaseUpdates()
-        {
-            self.listener = self.ref?.addSnapshotListener({ (snapshot, error) in
-                guard let documents = snapshot?.documents else {
-                    print("Error fetching documents: \(error!)")
-                    return
-                }
-        
-                self.leaderboards = [LeaderboardData]()
-                for leader in documents {
-                    let name = self.userEmail//LeaderboardData["name"] as! String?
-                    let stepsWalked = self.numSteps//LeaderboardData["stepsWalked"] as! Int?
-
-
-                    self.leaderboards?.append(LeaderboardData(name: name!,
-                                                       stepsWalked: stepsWalked!))
-
-                }
-                
-            })
-        }
-    func toDictionary(vals: LeaderboardData)->[String:Any] {
-        return [
-            "name": NSString(string: (vals.name!)),
-            "stepsWalked": NSNumber(value: vals.stepsWalked!)
-        ]
-    }
+    
+    
+//    func toDictionary(vals: LeaderboardData)->[String:Any] {
+//        return [
+//            "name": NSString(string: (vals.name!)),
+//            "stepsWalked": NSNumber(value: vals.stepsWalked!)
+//        ]
+//    }
 
     
     /*
