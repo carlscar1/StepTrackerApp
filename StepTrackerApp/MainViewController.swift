@@ -53,7 +53,28 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         if let email = self.userEmail {
                 self.loginLabel.text = ("Welcome, " + email + "!")
-        }
+                
+            if self.stepGoal == nil {
+                        let userDocument = self.ref?.document(email)
+                        userDocument?.getDocument { document, error in
+                            if let document = document, document.exists {
+                                if let stepGoal = document.data()?["stepGoal"] as? Int {
+                                    self.stepGoal = stepGoal
+                                    print("Retrieved step goal from Firestore: \(stepGoal)")
+
+                                    // Update UI with the retrieved step goal
+                                    self.updateUIWithStepGoal()
+                                }
+                            } else {
+                                print("Error retrieving step goal: \(error?.localizedDescription ?? "Unknown error")")
+                            }
+                        }
+                    } else {
+                        // If stepGoal is already set, update UI directly
+                        self.updateUIWithStepGoal()
+                    }
+                }
+            
         
         authorizeHealthKit() // This function provides to authorize the HealthKit.
         
@@ -70,6 +91,16 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let model = LeaderboardModel()
         self.leaderboards = model.getLeaderboardData()
         //self.sortIntoSections(leaderboards: self.leaderboards!)
+    }
+    
+    private func updateUIWithStepGoal() {
+        if let goal = self.stepGoal {
+            print("Current step goal: \(goal)")
+
+            // Update the UI with the retrieved step goal
+            let progressPercent: Float = Float(self.numSteps!) / Float(goal)
+            self.percentLabel.text = "\(self.numSteps!)/\(goal) steps = \(Float(progressPercent * 100))% of goal"
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -105,23 +136,27 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private func handleStepGoalSet(_ goal: Int) {
-            // Handle the step goal set by the user
-            print("Step goal set: \(goal)")
+        // Handle the step goal set by the user
+        print("Step goal set: \(goal)")
 
-            // Save the goal to the variable
-            self.stepGoal = goal
+        // Save the goal to Firestore
+        if let userEmail = self.userEmail {
+            let userDocument = self.ref?.document(userEmail)
 
-            // Update your UI or perform any other necessary actions with the step goal
-            if let goal = self.stepGoal {
-                print("Current step goal: \(goal)")
-
-                
-                // Update the UI with the new step goal
-                let progressPercent: Float = Float(self.numSteps!) / Float(goal)
-                self.percentLabel.text = "\(self.numSteps!)/\(goal) steps = \(Float(progressPercent * 100))% of goal"
-                
+            userDocument?.setData(["stepGoal": goal], merge: true) { error in
+                if let error = error {
+                    print("Error setting step goal: \(error.localizedDescription)")
+                } else {
+                    print("Step goal saved successfully.")
+                    self.stepGoal = goal  // Set the step goal immediately
+                    self.updateUIWithStepGoal()  // Update the UI
+                }
             }
         }
+    }
+
+    
+    
     
         private func authorizeHealthKit() {
             let healthKitTypes: Set = [ HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)! ] // We want to access the step count.
