@@ -8,10 +8,15 @@
 import UIKit
 import SwiftUI
 import HealthKit
+import FirebaseFirestore
 
 class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     private let healthStore = HKHealthStore()
+    
+    fileprivate var ref: CollectionReference?
+    fileprivate var db: Firestore!
+    fileprivate var listener: ListenerRegistration?
     
     @IBOutlet weak var stepsLabel: UILabel!
     @IBOutlet weak var loginLabel: UILabel!
@@ -23,6 +28,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     var userEmail : String?
     var leaderboards : [LeaderboardData]?
+    var numSteps: Int?
     
     var tableViewData: [(sectionHeader: String, leaderboards: [LeaderboardData])]? {
         didSet {
@@ -34,6 +40,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        db = Firestore.firestore()
+        ref = db.collection("leaderboard")
         
         if let email = self.userEmail {
                 self.loginLabel.text = email
@@ -54,6 +63,14 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let model = LeaderboardModel()
         self.leaderboards = model.getLeaderboardData()
         //self.sortIntoSections(leaderboards: self.leaderboards!)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        registerForFireBaseUpdates()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.listener?.remove()
     }
     
         private func authorizeHealthKit() {
@@ -89,7 +106,13 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     let progressPercent: Float = Float(mSample/10000)
                     self.percentLabel.text = "\(Int(mSample))/10,000 steps = \(Float(progressPercent*100))% of goal!"
                     self.stepsProgress.setProgress(progressPercent, animated: false)
+                    self.numSteps = Int(mSample)
                     // here is where to update the step count labels/info
+                    
+                    if let r = self.ref {
+                        let leader = LeaderboardData(name: self.userEmail, stepsWalked: self.numSteps)
+                        r.addDocument(data: self.toDictionary(vals: leader))
+                    }
                 }
             })
             self.healthStore .execute(sampleQuery)
@@ -154,6 +177,35 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return cell
             
     }
+    
+    fileprivate func registerForFireBaseUpdates()
+        {
+            self.listener = self.ref?.addSnapshotListener({ (snapshot, error) in
+                guard let documents = snapshot?.documents else {
+                    print("Error fetching documents: \(error!)")
+                    return
+                }
+        
+                self.leaderboards = [LeaderboardData]()
+                for leader in documents {
+                    let name = self.userEmail//LeaderboardData["name"] as! String?
+                    let stepsWalked = self.numSteps//LeaderboardData["stepsWalked"] as! Int?
+
+
+                    self.leaderboards?.append(LeaderboardData(name: name!,
+                                                       stepsWalked: stepsWalked!))
+
+                }
+                
+            })
+        }
+    func toDictionary(vals: LeaderboardData)->[String:Any] {
+        return [
+            "name": NSString(string: (vals.name!)),
+            "stepsWalked": NSNumber(value: vals.stepsWalked!)
+        ]
+    }
+
     
     /*
     // MARK: - UITableViewDelegate
