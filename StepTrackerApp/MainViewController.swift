@@ -99,6 +99,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
             // Update the UI with the retrieved step goal
             let progressPercent: Float = Float(self.numSteps!) / Float(goal)
+            print("Steps: " + String(numSteps!) + " Goal: " + String(goal))
+            self.stepsProgress.setProgress(progressPercent, animated: false)
             self.percentLabel.text = "\(self.numSteps!)/\(goal) steps = \(Float(progressPercent * 100))% of goal"
         }
     }
