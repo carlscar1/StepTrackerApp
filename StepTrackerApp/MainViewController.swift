@@ -47,51 +47,45 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         db = Firestore.firestore()
         ref = db.collection("leaderboard")
-        
-        if let email = self.userEmail {
-                self.loginLabel.text = ("Welcome, " + email + "!")
-                
-            if self.stepGoal == nil {
-                        let userDocument = self.ref?.document(email)
-                        userDocument?.getDocument { document, error in
-                            if let document = document, document.exists {
-                                if let stepGoal = document.data()?["stepGoal"] as? Int {
-                                    self.stepGoal = stepGoal
-                                    print("Retrieved step goal from Firestore: \(stepGoal)")
 
-                                    // Update UI with the retrieved step goal
-                                    self.updateUIWithStepGoal()
-                                }
-                            } else {
-                                print("Error retrieving step goal: \(error?.localizedDescription ?? "Unknown error")")
-                            }
+        if let email = self.userEmail {
+            self.loginLabel.text = "Welcome, " + email + "!"
+
+            if self.stepGoal == nil {
+                let userDocument = self.ref?.document(email)
+                userDocument?.getDocument { document, error in
+                    if let document = document, document.exists {
+                        if let stepGoal = document.data()?["stepGoal"] as? Int {
+                            self.stepGoal = stepGoal
+                            print("Retrieved step goal from Firestore: \(stepGoal)")
+
+                            // Update UI with the retrieved step goal
+                            self.updateUIWithStepGoal()
                         }
                     } else {
-                        // If stepGoal is already set, update UI directly
-                        self.updateUIWithStepGoal()
+                        print("Error retrieving step goal: \(error?.localizedDescription ?? "Unknown error")")
                     }
                 }
-            
-        
-        authorizeHealthKit() // This function provides to authorize the HealthKit.
-        
-        gettingStepCount() { stepCount in // This function provides to get the step count of the users.
-                    DispatchQueue.main.async {
-                        print("Step count is:", Int(stepCount)) // Get the step count.
-                        self.stepsLabel.text = "You have walked \(Int(stepCount)) steps!"
-                        //these things do not update here...
-                    }
+            } else {
+                // If stepGoal is already set, update UI directly
+                self.updateUIWithStepGoal()
+            }
         }
-        
+
+        authorizeHealthKit() // This function provides to authorize the HealthKit.
+
+        // Initial step count fetch and UI update
+        updateStepCountAndUI()
+
         self.tableView.delegate = self
         self.tableView.dataSource = self
         let model = LeaderboardModel()
         self.leaderboards = model.getLeaderboardData()
-        //self.sortIntoSections(leaderboards: self.leaderboards!)
     }
+
     
     private func updateUIWithStepGoal() {
         if let goal = self.stepGoal {
@@ -170,6 +164,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     private func gettingStepCount(completion: @escaping (Double) -> Void) {
         var mSample = 0.0
 
+        // Clear the existing step count before updating
+        self.numSteps = 0
+
         // Get the current step count before querying for new data
         if let currentStepCount = self.numSteps {
             mSample = Double(currentStepCount)
@@ -183,7 +180,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             limit: HKObjectQueryNoLimit,
             sortDescriptors: nil,
             resultsHandler: { [weak self] (query, results, error) in
-
                 guard let self = self else { return }
 
                 guard let samples = results as? [HKQuantitySample] else {
@@ -205,7 +201,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     let currentStepCountText = (mSample > 0) ? "\(Int(mSample))" : "0"
 
                     self.stepsLabel.text = "You have walked \(currentStepCountText) steps today!"
-                    
+
                     // Update the progress view
                     let progressPercent: Float = Float(mSample) / Float(userStepGoal)
                     self.percentLabel.text = "\(currentStepCountText)/\(userStepGoal) steps = \(Float(progressPercent * 100))% of goal"
@@ -218,12 +214,15 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         let leader = LeaderboardData(name: self.userEmail, stepsWalked: self.numSteps)
                         r.addDocument(data: self.toDictionary(vals: leader))
                     }
+
+                    completion(mSample) // Call the completion handler with the updated step count
                 }
             }
         )
 
         self.healthStore.execute(sampleQuery)
     }
+
 
 
 
@@ -255,15 +254,19 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let predicate = HKQuery.predicateForSamples(withStart: startDate,end: today,options: [])
             return predicate
     }
+    
+    func updateStepCountAndUI() {
+        gettingStepCount { stepCount in
+            DispatchQueue.main.async {
+                print("Step count is:", Int(stepCount))
+                self.stepsLabel.text = "You have walked \(Int(stepCount)) steps!"
+                // Update other UI elements as needed
+            }
+        }
+    }
 
     @IBAction func updateStepsButtonPressed(_ sender: Any) {
-        gettingStepCount() { stepCount in // This function provides to get the step count of the users.
-                    DispatchQueue.main.async {
-                        print("Step count is:", Int(stepCount)) // Get the step count.
-                        self.stepsLabel.text = "You have walked \(Int(stepCount)) steps!"
-                        //these things do not update here...
-                    }
-        }
+        updateStepCountAndUI()
     }
     
     /*func sortIntoSections(leaderboards: [LeaderboardData]) {
